@@ -262,6 +262,11 @@
 			shape.position.set( 0, 20, -15);
 
 			shape.rotation.set( Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+
+			shape.setCcdMotionThreshold(1);
+
+// Set the radius of the embedded sphere such that it is smaller than the object
+			shape.setCcdSweptSphereRadius(0.2);
 /*
 			if ( addshapes ) {
 				shape.addEventListener( 'ready', createShape );
