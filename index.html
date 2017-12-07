@@ -286,6 +286,7 @@
 
 	window.onload = initScene;
 
+var maxRotation = 0.2;
 	window.addEventListener('devicemotion', function(event) {
 		ground.rotation.set(Math.min(Math.max(event.rotationRate.alpha, -maxRotation), maxRotation),
 			0,
