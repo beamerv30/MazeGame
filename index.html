@@ -291,7 +291,7 @@
 	window.ondeviceorientation = function(event) {
 		ground.rotation.set(
 			Math.min(Math.max(Math.round(
-				event.beta) / 90, -maxRotation), maxRotation),
+				-event.beta) / 90, -maxRotation), maxRotation),
 			ground.rotation.y,
 			Math.min(Math.max(Math.round(
 				event.gamma) / 90, -maxRotation), maxRotation));
