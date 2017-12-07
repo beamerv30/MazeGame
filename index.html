@@ -288,9 +288,9 @@
 
 var maxRotation = 0.2;
 	window.addEventListener('devicemotion', function(event) {
-		ground.rotation.set(Math.min(Math.max(event.rotationRate.alpha, -maxRotation), maxRotation),
+		ground.rotation.set(Math.min(Math.max(Math.Round(event.rotationRate.alpha / 90), -maxRotation), maxRotation),
 			0,
-			Math.min(Math.max(event.rotationRate.gamma, -maxRotation), maxRotation));
+			Math.min(Math.max(Math.round(event.rotationRate.gamma) / 90, -maxRotation), maxRotation));
 		ground.__dirtyRotation = true;
 	});
 
