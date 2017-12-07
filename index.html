@@ -291,10 +291,10 @@
 	window.addEventListener('devicemotion', function(event) {
 		ground.rotation.set(
 			Math.min(Math.max(Math.round(
-				ground.rotation.x + event.rotationRate.alpha / 1000), -maxRotation), maxRotation),
+				ground.rotation.x + event.rotationRate.alpha), -maxRotation), maxRotation),
 			ground.rotation.y,
 			Math.min(Math.max(Math.round(
-				ground.rotation.z + event.rotationRate.gamma / 1000), -maxRotation), maxRotation));
+				ground.rotation.z + event.rotationRate.gamma), -maxRotation), maxRotation));
 		ground.__dirtyRotation = true;
 	});
 
