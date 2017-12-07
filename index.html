@@ -32,7 +32,7 @@
 				//append fügt was zusammen
 		document.getElementById( 'viewport' ).appendChild( renderer.domElement );
 
-		scene = new Physijs.Scene({ fixedTimeStep: 1/120 });
+		scene = new Physijs.Scene({ fixedTimeStep: 1/30 });
 		scene.setGravity(new THREE.Vector3( 0, -250, 0 ));
 		scene.addEventListener(
 			'update',
@@ -280,20 +280,18 @@
 
 		};
 
-		sensor = new Gyroscope();
-		sensor.addEventListener('reading', function() {
-			ground.rotation.set(Math.min(Math.max(sensor.x, -maxRotation), maxRotation),
-				Math.min(Math.max(sensor.y, -maxRotation), maxRotation),
-				Math.min(Math.max(sensor.z, -maxRotation), maxRotation));
-			ground.__dirtyRotation = true;
-		});
-		sensor.start();
-
 		scene.simulate();
 		renderer.render();
 	})();
 
 	window.onload = initScene;
+
+	window.addEventListener('devicemotion', function(event) {
+		ground.rotation.set(Math.min(Math.max(event.rotationRate.alpha, -maxRotation), maxRotation),
+			0,
+			Math.min(Math.max(event.rotationRate.gamma, -maxRotation), maxRotation));
+		ground.__dirtyRotation = true;
+	});
 
 	</script>
 </head>
