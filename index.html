@@ -124,6 +124,28 @@
 			wall4.position.set(10,1,12)
 		ground.add( wall4 )
 
+		var shape, material = new THREE.MeshLambertMaterial({ opacity: 0, transparent: true });
+		var sphere_geometry = new THREE.SphereGeometry( 2, 32, 32 );
+		var hole = new Physijs.SphereMesh(
+					sphere_geometry,
+					material,
+					undefined,
+					{ friction: 0, restitution: 0 }
+		);
+		hole.position.x = 22;
+		hole.position.z = 22;
+		hole.addEventListener( 'collision', function( other_object, linear_velocity, angular_velocity ) {
+		    if (other_object === ball) {
+					alert('You won!');
+					ball = null;
+				}
+		});
+		hole.material.color.setRGB( 255, 255, 255 );
+
+		ground.add(hole);
+
+
+
 
 		var maxRotation = 0.2;
 		document.addEventListener('keydown',
