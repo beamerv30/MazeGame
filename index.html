@@ -68,10 +68,10 @@
 		light.position.set( 20, 40, -15 );
 		light.target.position.copy( scene.position );
 		light.castShadow = true;
-		light.shadowCameraLeft = -60;
-		light.shadowCameraTop = -60;
-		light.shadowCameraRight = 60;
-		light.shadowCameraBottom = 60;
+		light.shadowCameraLeft = -5;
+		light.shadowCameraTop = -5;
+		light.shadowCameraRight = 5;
+		light.shadowCameraBottom = -5;
 		light.shadowCameraNear = 20;
 		light.shadowCameraFar = 200;
 		light.shadowBias = -.0001
@@ -93,7 +93,7 @@
 		ground_material.map.repeat.set( 2.5, 2.5 );
 
 		// Ground
-		ground = new Physijs.BoxMesh( new THREE.BoxGeometry(50, 1, 50), ground_material,
+		ground = new Physijs.BoxMesh( new THREE.BoxGeometry(50, 10, 50), ground_material,
 		0		// mass
 	);
 		ground.receiveShadow = true;
@@ -101,25 +101,25 @@
 
 		// Maze
 		// (x,y,z) y = oben ; x und z verstellen
-		var wall1 = new Physijs.BoxMesh( new THREE.CubeGeometry( 1,8, 20 ), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
+		var wall1 = new Physijs.BoxMesh( new THREE.CubeGeometry( 1,13, 20 ), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
 			wall1.receiveShadow = true;
       wall1.castShadow = true;
 			wall1.position.set(-10,1,-10)
 		ground.add( wall1)
 
-		var wall2 = new Physijs.BoxMesh( new THREE.CubeGeometry( -25, 8, -1 ), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
+		var wall2 = new Physijs.BoxMesh( new THREE.CubeGeometry( -25, 13, -1 ), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
 			wall2.receiveShadow = true;
       wall2.castShadow = true;
 			wall2.position.set(3,0,0)
 		ground.add( wall2 )
 
-    var wall3 = new Physijs.BoxMesh( new THREE.CubeGeometry( 1,8,20), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
+    var wall3 = new Physijs.BoxMesh( new THREE.CubeGeometry( 1,13,20), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
 			wall3.receiveShadow = true;
       wall3.castShadow = true;
 			wall3.position.set(-10,1,8)
 		ground.add( wall3 )
 
-    var wall4 = new Physijs.BoxMesh( new THREE.CubeGeometry( 1,8,10), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
+    var wall4 = new Physijs.BoxMesh( new THREE.CubeGeometry( 1,13,10), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
 			wall4.receiveShadow = true;
       wall4.castShadow = true;
 			wall4.position.set(10,1,12)
@@ -192,24 +192,24 @@
 
 		// Bumpers
 		var bumper,
-			bumper_geom = new THREE.BoxGeometry(2, 3, 50);
+			bumper_geom = new THREE.BoxGeometry(2, 8, 50);
 
 		bumper = new Physijs.BoxMesh( bumper_geom, new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0, { friction: 0, restitution: 0 } );
-			bumper.position.y = 1;
+			bumper.position.y = 6;
 			bumper.position.x = -24;
 			bumper.receiveShadow = true;
 			bumper.castShadow = true;
 		ground.add( bumper );
 
 		bumper = new Physijs.BoxMesh( bumper_geom, new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0, { friction: 0, restitution: 0 } );
-			bumper.position.y = 1;
+			bumper.position.y = 6;
 			bumper.position.x = 24;
 			bumper.receiveShadow = true;
 			bumper.castShadow = true;
 		ground.add( bumper );
 
 		bumper = new Physijs.BoxMesh( bumper_geom, new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0, { friction: 0, restitution: 0 } );
-			bumper.position.y = 1;
+			bumper.position.y = 6;
 			bumper.position.z = -24;
 			bumper.rotation.y = Math.PI / 2;
 			bumper.receiveShadow = true;
@@ -217,7 +217,7 @@
 		ground.add( bumper );
 
 		bumper = new Physijs.BoxMesh( bumper_geom, new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0, { friction: 0, restitution: 0 } );
-			bumper.position.y = 1;
+			bumper.position.y = 6;
 			bumper.position.z = 24;
 			bumper.rotation.y = Math.PI / 2;
 			bumper.receiveShadow = true;
