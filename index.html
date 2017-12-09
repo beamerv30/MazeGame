@@ -3,7 +3,7 @@
 <html>
 
 <head>
-	<title>Shape emitter - Physijs</title>
+	<title>Maze Game</title>
 
 	<link rel="stylesheet" type="text/css" href="css/styles.css" />
 
@@ -12,14 +12,15 @@
 	<script type="text/javascript" src="js/tween.js"></script>
 	<script type="text/javascript" src="js/physi.js"></script>
 	<script type="text/javascript">
-//wofür ist use strict?
+
 	'use strict';
 
 	Physijs.scripts.worker = 'js/physijs_worker.js';
 	Physijs.scripts.ammo = 'ammo.js';
 
-	var initScene, render, createShape, loader,
-		renderer, render_stats, physics_stats, scene, light, ground, ground_material, camera, ball, hole;
+	// global variables
+	var initScene, render, createShape, loader, wall1, wall2, wall3, wall4,
+		renderer, render_stats, scene, light, ground, ground_material, camera, ball, hole;
 
 
 
@@ -29,7 +30,7 @@
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMapSoft = true;
-				//append fügt was zusammen
+				// append fügt was zusammen
 		document.getElementById( 'viewport' ).appendChild( renderer.domElement );
 
 		scene = new Physijs.Scene({ fixedTimeStep: 1/30 });
@@ -38,14 +39,14 @@
 			'update',
 			function() {
 
-				//to do the physical calc
+				// method to iterate the physics setup.
 				scene.simulate( undefined, 2 );
-				// wieso geht sowas nicht?
 
 				if(ball != null && ball.position.y <= -20 ){
 					alert('You lose');
 					scene.remove(ball);
 					ball = null;
+					window.location.reload(true);
 				}
 
 				if (ball != null && ball.position.distanceTo(hole.position) < 4) {
@@ -57,8 +58,7 @@
 			}
 		);
 
-
-
+		// camera
 		camera = new THREE.PerspectiveCamera(
 			35, //zoomen
 			window.innerWidth / window.innerHeight,
@@ -69,7 +69,7 @@
 		camera.lookAt( scene.position );
 		scene.add( camera );
 
-		// Light
+		// light
 		light = new THREE.DirectionalLight( 0xFFFFFF );
 		light.position.set( 20, 40, -15 );
 		light.target.position.copy( scene.position );
@@ -88,12 +88,11 @@
 		// Loader
 		loader = new THREE.TextureLoader();
 
-
 		// Materials
 		ground_material = Physijs.createMaterial(
 			new THREE.MeshLambertMaterial({ map: loader.load( 'images/wood.jpg' ) }),
 			0.1, // Low Reibung
-			0 // low restitution
+			0 // low ->0  restitution (bounciness)
 		);
 		ground_material.map.wrapS = ground_material.map.wrapT = THREE.RepeatWrapping;
 		ground_material.map.repeat.set( 2.5, 2.5 );
@@ -106,29 +105,49 @@
 		ground.castShadow = true
 
 		// Maze
-		// (x,y,z) y = oben ; x und z verstellen
-		var wall1 = new Physijs.BoxMesh( new THREE.CubeGeometry( 1,8, 20 ), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
-			wall1.receiveShadow = true;
-      wall1.castShadow = true;
-			wall1.position.set(-10,1,-10)
+		// (x,y,z) y = Höhe ; x und z = tiefe
+		wall1 = new Physijs.BoxMesh(
+			new THREE.CubeGeometry( 1,8, 20 ),
+			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
+			ground_material,
+			0
+		);
+		wall1.receiveShadow = true;
+    wall1.castShadow = true;
+		wall1.position.set(-10,1,-10)
 		ground.add( wall1)
 
-		var wall2 = new Physijs.BoxMesh( new THREE.CubeGeometry( -25, 8, -1 ), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
-			wall2.receiveShadow = true;
-      wall2.castShadow = true;
-			wall2.position.set(3,0,0)
+		wall2 = new Physijs.BoxMesh(
+			new THREE.CubeGeometry( -25, 8, -1 ),
+			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
+			ground_material,
+			0
+		);
+		wall2.receiveShadow = true;
+    wall2.castShadow = true;
+		wall2.position.set(3,0,0)
 		ground.add( wall2 )
 
-    var wall3 = new Physijs.BoxMesh( new THREE.CubeGeometry( 1,8,20), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
-			wall3.receiveShadow = true;
-      wall3.castShadow = true;
-			wall3.position.set(-10,1,8)
+    wall3 = new Physijs.BoxMesh(
+			new THREE.CubeGeometry( 1,8,20),
+			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
+			ground_material,
+			0
+		);
+		wall3.receiveShadow = true;
+    wall3.castShadow = true;
+		wall3.position.set(-10,1,8)
 		ground.add( wall3 )
 
-    var wall4 = new Physijs.BoxMesh( new THREE.CubeGeometry( 1,8,10), new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0 );
-			wall4.receiveShadow = true;
-      wall4.castShadow = true;
-			wall4.position.set(10,1,12)
+    wall4 = new Physijs.BoxMesh(
+			new THREE.CubeGeometry( 1,8,10),
+			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
+			ground_material,
+			0
+		);
+		wall4.receiveShadow = true;
+    wall4.castShadow = true;
+		wall4.position.set(10,1,12)
 		ground.add( wall4 )
 
 		hole = new Physijs.SphereMesh(
@@ -148,93 +167,85 @@
 
 		var maxRotation = 0.2;
 		document.addEventListener('keydown',
-					function( push ) {
-						switch( push.keyCode ) {
-							case 65: // A
+		function( push ) {
+			switch( push.keyCode ) {
 
+				//key confiuration
+				//rotation
+				case 65: //A
+					ground.rotation.set(Math.min(ground.rotation.x + 0.01, maxRotation), ground.rotation.y, ground.rotation.z);
+					ground.__dirtyRotation = true;
+					// You may also want to cancel the object's velocity
+					ground.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+					ground.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+					break;
 
-								// Change the object's position
+				case 83: // S
+					ground.rotation.set(Math.max(ground.rotation.x - 0.01, -maxRotation), ground.rotation.y, ground.rotation.z);
+					ground.__dirtyRotation = true;
+					// You may also want to cancel the object's velocity
+					ground.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+					ground.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+					break;
 
-								// Change the object's rotation
-								ground.rotation.set(Math.min(ground.rotation.x + 0.01, maxRotation), ground.rotation.y, ground.rotation.z);
-								ground.__dirtyRotation = true;
+				case 87: // W
+					ground.rotation.set(ground.rotation.x, ground.rotation.y, Math.min(ground.rotation.z + 0.01, maxRotation));
+					ground.__dirtyRotation = true;
+					// You may also want to cancel the object's velocity
+					ground.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+					ground.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+					break;
 
-								// You may also want to cancel the object's velocity
-								ground.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-								ground.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-/*
-								// Change the object's rotation
-								bumper.rotation.set(0, 0, 0);
-								bumper.__dirtyRotation = true;
+				case 89: // Y
+					ground.rotation.set(ground.rotation.x, ground.rotation.y, Math.max(ground.rotation.z - 0.01, -maxRotation));
+					ground.__dirtyRotation = true;
+					ground.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+					ground.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+					break;
 
-								// You may also want to cancel the object's velocity
-								bumper.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-								bumper.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-								bumper.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-*/
-								break;
-
-							case 83: // S
-								// Change the object's rotation
-								ground.rotation.set(Math.max(ground.rotation.x - 0.01, -maxRotation), ground.rotation.y, ground.rotation.z);
-								ground.__dirtyRotation = true;
-
-								// You may also want to cancel the object's velocity
-								ground.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-								ground.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-
-								break;
-
-							case 87: // W
-								// Change the object's rotation
-								ground.rotation.set(ground.rotation.x, ground.rotation.y, Math.min(ground.rotation.z + 0.01, maxRotation));
-								ground.__dirtyRotation = true;
-
-								// You may also want to cancel the object's velocity
-								ground.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-								ground.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-								break;
-
-							case 89: // Y
-								// Change the object's rotation
-								ground.rotation.set(ground.rotation.x, ground.rotation.y, Math.max(ground.rotation.z - 0.01, -maxRotation));
-								ground.__dirtyRotation = true;
-
-								// You may also want to cancel the object's velocity
-								ground.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-								ground.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-								break;
-
-							default :
-							alert('GAME INSTRUCTIONS: 1. klick on the maze to start the game 2. controll the maze by pressing W(up) Y(down) A(left) S(right)');
-							window.location.reload(true);
-							break;
-
-
-						}
-					}
-		);
+				default :	//else
+					alert('GAME INSTRUCTIONS: 1. klick on the maze to start the game 2. controll the maze by pressing W(up) Y(down) A(left) S(right)');
+					window.location.reload(true);
+					break;
+			}
+		}
+	);
 
 
 		// Bumpers
 		var bumper,
 			bumper_geom = new THREE.BoxGeometry(2, 3, 50);
 
-		bumper = new Physijs.BoxMesh( bumper_geom, new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0, { friction: 0, restitution: 0 } );
+		bumper = new Physijs.BoxMesh( bumper_geom,
+			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
+			ground_material,
+			0,
+			{ friction: 0, restitution: 0 }
+		);
 			bumper.position.y = 1;
 			bumper.position.x = -24;
 			bumper.receiveShadow = true;
 			bumper.castShadow = true;
 		ground.add( bumper );
 
-		bumper = new Physijs.BoxMesh( bumper_geom, new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0, { friction: 0, restitution: 0 } );
+		bumper = new Physijs.BoxMesh( bumper_geom,
+			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
+			ground_material,
+			0,
+			{ friction: 0, restitution: 0 }
+		);
 			bumper.position.y = 1;
 			bumper.position.x = 24;
 			bumper.receiveShadow = true;
 			bumper.castShadow = true;
 		ground.add( bumper );
 
-		bumper = new Physijs.BoxMesh( bumper_geom, new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0, { friction: 0, restitution: 0 } );
+		bumper = new Physijs.BoxMesh( bumper_geom,
+			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
+			ground_material,
+			0,
+			{ friction: 0, restitution: 0 }
+		);
 			bumper.position.y = 1;
 			bumper.position.z = -24;
 			bumper.rotation.y = Math.PI / 2;
@@ -242,7 +253,12 @@
 			bumper.castShadow = true;
 		ground.add( bumper );
 
-		bumper = new Physijs.BoxMesh( bumper_geom, new THREE.MeshBasicMaterial({ color: '#CD853F' }), ground_material, 0, { friction: 0, restitution: 0 } );
+		bumper = new Physijs.BoxMesh( bumper_geom,
+			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
+			ground_material,
+			0,
+			{ friction: 0, restitution: 0 }
+		);
 			bumper.position.y = 1;
 			bumper.position.z = 24;
 			bumper.rotation.y = Math.PI / 2;
@@ -256,7 +272,7 @@
 		scene.simulate();
 
 		createShape();
-	};
+	}; //init scene end
 
 	render = function() {
 		requestAnimationFrame( render );
@@ -277,7 +293,6 @@
 						sphere_geometry,
 						material,
 						undefined,
-						// Bounciness: restitution: Math.random() * 1.5
 						{ friction: 0.1, restitution: 1 }
 			);
 			addshapes = false;
@@ -285,31 +300,18 @@
 			shape.material.color.setRGB( Math.random() * 100 / 100, Math.random() * 100 / 100, Math.random() * 100 / 100 );
 			shape.castShadow = true;
 			shape.receiveShadow = true;
-//Math.random() * 30 - 15,20,Math.random() * 30 - 15);
 			shape.position.set( 0, 20, -15);
-
-			shape.rotation.set( Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-
+			shape.rotation.set( 0.5, 0.5, 0.5);
 			shape.setCcdMotionThreshold(1);
-
-// Set the radius of the embedded sphere such that it is smaller than the object
+			// Set the radius of the embedded sphere such that it is smaller than the object
 			shape.setCcdSweptSphereRadius(0.2);
-/*
-			if ( addshapes ) {
-				shape.addEventListener( 'ready', createShape );
-			}
-			*/
 			scene.add( shape );
 			ball = shape;
-
 			new TWEEN.Tween(shape.material).to({opacity: 1}, 500).start();
-
-		//	document.getElementById( 'shapecount' ).textContent = ( ++shapes ) + ' shapes created';
 		};
 
 		return function() {
-			setTimeout( doCreateShape, 250 );
-
+			setTimeout( doCreateShape, 1 );
 		};
 
 		scene.simulate();
@@ -329,10 +331,10 @@
 				event.gamma) / 90, -maxRotation), maxRotation));
 		ground.__dirtyRotation = true;
 	};
-
 	</script>
 </head>
-	<body>
-    <div id="viewport"></div>
-	</body>
+
+<body>
+	<div id="viewport"></div>
+</body>
 </html>
