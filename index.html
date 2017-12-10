@@ -20,7 +20,8 @@
 
 	// global variables
 	var initScene, render, createShape, loader, wall1, wall2, wall3, wall4,
-		renderer, render_stats, scene, light, ground, ground_material, camera, ball, hole;
+		renderer, render_stats, scene, light, ground, ground_material, camera, ball,
+		hole, hole2;
 
 
 
@@ -51,6 +52,12 @@
 
 				if (ball != null && ball.position.distanceTo(hole.position) < 4) {
 					alert('You win');
+					scene.remove(ball);
+					ball = null;
+					window.location.reload(true);
+				}
+				if (ball != null && ball.position.distanceTo(hole2.position) < 4) {
+					alert('You lose');
 					scene.remove(ball);
 					ball = null;
 					window.location.reload(true);
@@ -159,8 +166,20 @@
 		hole.position.y = 1.5;
 		hole.position.z = -17;
 
-
 		ground.add(hole);
+
+		hole2 = new Physijs.SphereMesh(
+			new THREE.SphereGeometry(2, 32, 32),
+			new THREE.MeshBasicMaterial({ color: '#FF4500' }),
+			0
+		);
+		hole2.position.x = 10;
+		hole2.position.y = 1.5;
+		hole2.position.z = 20.5;
+
+
+		ground.add(hole2);
+
 
 
 
