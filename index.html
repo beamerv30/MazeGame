@@ -105,11 +105,12 @@
 		ground_material.map.repeat.set( 2.5, 2.5 );
 
 		// Ground
-		ground = new Physijs.BoxMesh( new THREE.BoxGeometry(50, 1, 50), ground_material,
+		ground = new Physijs.BoxMesh( new THREE.BoxGeometry(50, 2, 50), ground_material,
 		0		// mass
 	);
 		ground.receiveShadow = true;
 		ground.castShadow = true
+		ground.position.set(0,-1,0)
 
 		// Maze
 		// (x,y,z) y = Höhe ; x und z = tiefe
