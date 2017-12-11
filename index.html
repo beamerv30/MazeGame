@@ -33,7 +33,7 @@
 		renderer.shadowMapSoft = true;
 				// append fügt was zusammen
 		document.getElementById( 'viewport' ).appendChild( renderer.domElement );
-
+		//The smaller the number, the more accurate (and slower) the simulation.
 		scene = new Physijs.Scene({ fixedTimeStep: 1/30 });
 		scene.setGravity(new THREE.Vector3( 0, -250, 0 ));
 		scene.addEventListener(
@@ -99,7 +99,7 @@
 		ground_material = Physijs.createMaterial(
 			new THREE.MeshLambertMaterial({ map: loader.load( 'images/wood.jpg' ) }),
 			0.1, // Low Reibung
-			0 // low ->0  restitution (bounciness)
+			0.1 // low ->0  restitution (bounciness)
 		);
 		ground_material.map.wrapS = ground_material.map.wrapT = THREE.RepeatWrapping;
 		ground_material.map.repeat.set( 2.5, 2.5 );
@@ -117,7 +117,8 @@
 			new THREE.CubeGeometry( 1,8, 20 ),
 			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
 			ground_material,
-			0
+			0,
+			{ friction: 0.1, restitution: 1 }
 		);
 		wall1.receiveShadow = true;
     wall1.castShadow = true;
@@ -128,7 +129,8 @@
 			new THREE.CubeGeometry( -25, 8, -1 ),
 			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
 			ground_material,
-			0
+			0,
+			{ friction: 0.1, restitution: 1 }
 		);
 		wall2.receiveShadow = true;
     wall2.castShadow = true;
@@ -139,7 +141,8 @@
 			new THREE.CubeGeometry( 1,8,20),
 			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
 			ground_material,
-			0
+			0,
+			{ friction: 0.1, restitution: 1 }
 		);
 		wall3.receiveShadow = true;
     wall3.castShadow = true;
@@ -231,59 +234,59 @@
 	);
 
 
-		// Bumpers
-		var bumper,
-			bumper_geom = new THREE.BoxGeometry(2, 3, 50);
+		// Borders
+		var border,
+			border_geom = new THREE.BoxGeometry(2, 3, 50);
 
-		bumper = new Physijs.BoxMesh( bumper_geom,
+		border = new Physijs.BoxMesh( border_geom,
 			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
 			ground_material,
 			0,
-			{ friction: 0, restitution: 0 }
+			{ friction: 0.1, restitution: 1 }
 		);
-			bumper.position.y = 1;
-			bumper.position.x = -24;
-			bumper.receiveShadow = true;
-			bumper.castShadow = true;
-		ground.add( bumper );
+			border.position.y = 1;
+			border.position.x = -24;
+			border.receiveShadow = true;
+			border.castShadow = true;
+		ground.add( border );
 
-		bumper = new Physijs.BoxMesh( bumper_geom,
+		border = new Physijs.BoxMesh( border_geom,
 			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
 			ground_material,
 			0,
-			{ friction: 0, restitution: 0 }
+			{ friction: 0.1, restitution: 11 }
 		);
-			bumper.position.y = 1;
-			bumper.position.x = 24;
-			bumper.receiveShadow = true;
-			bumper.castShadow = true;
-		ground.add( bumper );
+			border.position.y = 1;
+			border.position.x = 24;
+			border.receiveShadow = true;
+			border.castShadow = true;
+		ground.add( border );
 
-		bumper = new Physijs.BoxMesh( bumper_geom,
+		border = new Physijs.BoxMesh( border_geom,
 			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
 			ground_material,
 			0,
-			{ friction: 0, restitution: 0 }
+			{ friction: 0.1, restitution: 1 }
 		);
-			bumper.position.y = 1;
-			bumper.position.z = -24;
-			bumper.rotation.y = Math.PI / 2;
-			bumper.receiveShadow = true;
-			bumper.castShadow = true;
-		ground.add( bumper );
+			border.position.y = 1;
+			border.position.z = -24;
+			border.rotation.y = Math.PI / 2;
+			border.receiveShadow = true;
+			border.castShadow = true;
+		ground.add( border );
 
-		bumper = new Physijs.BoxMesh( bumper_geom,
+		border = new Physijs.BoxMesh( border_geom,
 			new THREE.MeshBasicMaterial({ color: '#CD853F' }),
 			ground_material,
 			0,
-			{ friction: 0, restitution: 0 }
+			{ friction: 0.1, restitution: 1 }
 		);
-			bumper.position.y = 1;
-			bumper.position.z = 24;
-			bumper.rotation.y = Math.PI / 2;
-			bumper.receiveShadow = true;
-			bumper.castShadow = true;
-		ground.add( bumper );
+			border.position.y = 1;
+			border.position.z = 24;
+			border.rotation.y = Math.PI / 2;
+			border.receiveShadow = true;
+			border.castShadow = true;
+		ground.add( border );
 
 		scene.add( ground );
 
@@ -319,7 +322,7 @@
 			shape.material.color.setRGB( Math.random() * 100 / 100, Math.random() * 100 / 100, Math.random() * 100 / 100 );
 			shape.castShadow = true;
 			shape.receiveShadow = true;
-			shape.position.set( 0, 20, -15);
+			shape.position.set( 0, 30, -15);
 			shape.rotation.set( 0.5, 0.5, 0.5);
 			shape.setCcdMotionThreshold(1);
 			// Set the radius of the embedded sphere such that it is smaller than the object
@@ -347,7 +350,8 @@
 				-event.beta) / 90, -maxRotation), maxRotation),
 			ground.rotation.y,
 			Math.min(Math.max(Math.round(
-				event.gamma) / 90, -maxRotation), maxRotation));
+				event.gamma) / 90, -maxRotation), maxRotation)
+		);
 		ground.__dirtyRotation = true;
 	};
 	</script>
