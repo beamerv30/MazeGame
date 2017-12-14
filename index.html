@@ -198,8 +198,8 @@
 					ground.rotation.set(Math.min(ground.rotation.x + 0.01, maxRotation), ground.rotation.y, ground.rotation.z);
 					ground.__dirtyRotation = true;
 					// You may also want to cancel the object's velocity
-					ground.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-					ground.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+					ground.setLinearVelocity(new THREE.Vector3(0, 0, 0.8));
+					ground.setAngularVelocity(new THREE.Vector3(0, 0, 0.1));
 					break;
 
 				case 83: // S
